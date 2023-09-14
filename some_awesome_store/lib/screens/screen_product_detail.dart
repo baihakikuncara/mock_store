@@ -13,30 +13,56 @@ class ProductDetailScreen extends StatelessWidget {
     var windowSize = MediaQuery.of(context).size;
     var imageSize = min(windowSize.width / 2, windowSize.height / 2);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          product.title,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox.square(
-              dimension: imageSize,
-              child: CachedNetworkImage(imageUrl: product.image),
-            ),
-            Text(product.title),
-            Text('\$${product.price}'),
-            StarRatingWidget(product.rating, Size.medium),
-            Row(
-              children: [
-                Text('${product.rating.count} vote(s)'),
-                Text('${product.rating.rate} rating'),
-              ],
-            ),
-            Text(product.description),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                product.title,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox.square(
+                dimension: 16,
+              ),
+              Row(
+                children: [
+                  SizedBox.square(
+                    dimension: imageSize,
+                    child: CachedNetworkImage(imageUrl: product.image),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '\$${product.price}',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      StarRatingWidget(product.rating, Size.medium),
+                      const SizedBox.square(
+                        dimension: 16,
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.shopping_cart),
+                        label: const Text('Add to cart'),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox.square(
+                dimension: 32,
+              ),
+              const Text('Description:'),
+              const SizedBox.square(
+                dimension: 16,
+              ),
+              Text(product.description),
+            ],
+          ),
         ),
       ),
     );
