@@ -13,6 +13,7 @@ class ProductsWidget extends ConsumerWidget {
       data: (data) {
         return GridView.count(
           crossAxisCount: MediaQuery.of(context).size.width ~/ 200,
+          childAspectRatio: 3 / 4,
           children: data.map((e) => ProductTile(e)).toList(),
         );
       },
