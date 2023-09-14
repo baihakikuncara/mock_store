@@ -62,11 +62,11 @@ class _CartProductTileState extends ConsumerState<CartProductTile> {
                   ),
                 ),
                 Text('${widget.cartItem.amount}'),
-                const Text('='),
+                const Text('  ='),
                 SizedBox(
-                    width: 40,
+                    width: 100,
                     child: Text(
-                      '${snapshot.data!.price * widget.cartItem.amount}',
+                      '\$${snapshot.data!.price * widget.cartItem.amount}',
                       textAlign: TextAlign.end,
                     )),
                 IconButton(
