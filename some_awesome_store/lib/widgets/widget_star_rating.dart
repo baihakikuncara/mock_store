@@ -30,6 +30,12 @@ class StarRatingWidget extends StatelessWidget {
                   : 30,
         )
     ];
+    var textSize = TextStyle(
+        fontSize: size == Size.small
+            ? 12
+            : size == Size.medium
+                ? 17
+                : 20);
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -38,8 +44,20 @@ class StarRatingWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: starsIcons,
         ),
-        Text('${rating.rate}'),
-        Text('(${rating.count})'),
+        const SizedBox.square(
+          dimension: 4,
+        ),
+        Text(
+          '${rating.rate}',
+          style: textSize,
+        ),
+        const SizedBox.square(
+          dimension: 4,
+        ),
+        Text(
+          '(${rating.count})',
+          style: textSize,
+        ),
       ],
     );
   }
