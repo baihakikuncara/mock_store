@@ -1,0 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:some_awesome_store/models/cart_notifier.dart';
+import 'package:some_awesome_store/widgets/tile_cart_product.dart';
+
+class CartScreen extends ConsumerWidget {
+  const CartScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<CartItem> carts = ref.watch(cartNotifierProvider);
+    return Scaffold(
+      appBar: AppBar(),
+      body: ListView(
+        children: [for (final item in carts) CartProductTile(item)],
+      ),
+    );
+  }
+}

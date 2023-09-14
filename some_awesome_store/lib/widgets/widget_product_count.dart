@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 
-class ProductCountWidget extends StatefulWidget {
+class ProductCountWidget extends ConsumerStatefulWidget {
   static const iconSize = 20.0;
 
   final Product product;
@@ -12,15 +14,16 @@ class ProductCountWidget extends StatefulWidget {
   const ProductCountWidget(this.product, {super.key});
 
   @override
-  State<ProductCountWidget> createState() => _ProductCountWidgetState();
+  ConsumerState<ProductCountWidget> createState() => _ProductCountWidgetState();
 }
 
-class _ProductCountWidgetState extends State<ProductCountWidget> {
+class _ProductCountWidgetState extends ConsumerState<ProductCountWidget> {
   final TextEditingController countController =
       TextEditingController(text: '0');
 
   @override
   Widget build(BuildContext context) {
+    var cart = ref.watch(cartNotifierProvider.notifier);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -58,7 +61,12 @@ class _ProductCountWidgetState extends State<ProductCountWidget> {
           ],
         ),
         ElevatedButton.icon(
-          onPressed: countController.text == '0' ? null : () {},
+          onPressed: countController.text == '0'
+              ? null
+              : () {
+                  cart.addItem(CartItem(
+                      widget.product.id, int.parse(countController.text)));
+                },
           icon: const Icon(Icons.shopping_cart),
           label: const Text('Add to cart'),
         ),

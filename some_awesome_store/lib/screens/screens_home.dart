@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/main.dart';
 import 'package:some_awesome_store/models/products.dart';
+import 'package:some_awesome_store/screens/screen_cart.dart';
 import 'package:some_awesome_store/widgets/widget_products.dart';
 
 final productsProvider = FutureProvider((ref) async {
@@ -26,6 +27,16 @@ class HomeScreen extends ConsumerWidget {
         title: const Text('Home'),
       ),
       body: const ProductsWidget(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CartScreen(),
+              ));
+        },
+        child: const Icon(Icons.shopping_cart),
+      ),
     );
   }
 }
