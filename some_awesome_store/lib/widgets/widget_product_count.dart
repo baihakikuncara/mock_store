@@ -21,36 +21,41 @@ class _ProductCountWidgetState extends State<ProductCountWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton.filled(
-          iconSize: ProductCountWidget.iconSize,
-          onPressed: () {
-            setState(() {
-              var val = int.parse(countController.text);
-              countController.text = max(0, val - 1).toString();
-            });
-          },
-          icon: const Icon(Icons.remove),
-        ),
-        SizedBox(
-          width: 30,
-          child: TextField(
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            controller: countController,
-          ),
-        ),
-        IconButton.filled(
-          iconSize: ProductCountWidget.iconSize,
-          onPressed: () {
-            setState(() {
-              var val = int.parse(countController.text);
-              countController.text = min(999, val + 1).toString();
-            });
-          },
-          icon: const Icon(Icons.add),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            IconButton.filled(
+              iconSize: ProductCountWidget.iconSize,
+              onPressed: () {
+                setState(() {
+                  var val = int.parse(countController.text);
+                  countController.text = max(0, val - 1).toString();
+                });
+              },
+              icon: const Icon(Icons.remove),
+            ),
+            SizedBox(
+              width: 30,
+              child: TextField(
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                controller: countController,
+              ),
+            ),
+            IconButton.filled(
+              iconSize: ProductCountWidget.iconSize,
+              onPressed: () {
+                setState(() {
+                  var val = int.parse(countController.text);
+                  countController.text = min(999, val + 1).toString();
+                });
+              },
+              icon: const Icon(Icons.add),
+            ),
+          ],
         ),
         ElevatedButton.icon(
           onPressed: countController.text == '0' ? null : () {},
