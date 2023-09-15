@@ -47,8 +47,8 @@ void setupDatabase() async {
   database = await openDatabase(
     join(await getDatabasesPath(), 'cart_database.db'),
     onCreate: (db, version) {
-      return db
-          .execute('CREATE TABLE cart(id INTEGER PRIMARY KEY, amount INT)');
+      return db.execute(
+          'CREATE TABLE cart(id INTEGER PRIMARY KEY, title TEXT, price REAL, description TEXT, category TEXT, image TEXT, amount INT)');
     },
     version: 1,
   );

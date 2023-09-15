@@ -32,7 +32,7 @@ class HomeScreen extends ConsumerWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CartScreen(),
+                builder: (context) => const CartScreen(),
               ));
         },
         child: const Icon(Icons.shopping_cart),
