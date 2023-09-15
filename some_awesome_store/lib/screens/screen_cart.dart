@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/models/cart_notifier.dart';
+import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/widgets/tile_cart_product.dart';
 
 class CartScreen extends ConsumerWidget {
@@ -8,11 +9,11 @@ class CartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<CartItem> carts = ref.watch(cartNotifierProvider);
+    List<(Product, int)> carts = ref.watch(cartNotifierProvider);
     return Scaffold(
       appBar: AppBar(),
       body: ListView(
-        children: [for (final item in carts) CartProductTile(item)],
+        children: [for (final item in carts) CartProductTile(item.$1, item.$2)],
       ),
     );
   }

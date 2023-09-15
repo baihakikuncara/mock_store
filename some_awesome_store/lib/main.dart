@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
-import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/screens/screens_home.dart';
 import 'package:sqflite/sqflite.dart';
 

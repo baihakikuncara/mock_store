@@ -27,6 +27,17 @@ class Product {
   String toString() {
     return 'id:$id, title:$title';
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'price': price,
+      'description': description,
+      'category': category,
+      'image': image,
+    };
+  }
 }
 
 class Rating {

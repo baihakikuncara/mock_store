@@ -6,9 +6,10 @@ import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 
 class CartProductTile extends ConsumerStatefulWidget {
-  final CartItem cartItem;
+  final Product product;
+  final int amount;
 
-  const CartProductTile(this.cartItem, {super.key});
+  const CartProductTile(this.product, this.amount, {super.key});
 
   @override
   ConsumerState<CartProductTile> createState() => _CartProductTileState();
@@ -24,8 +25,8 @@ class _CartProductTileState extends ConsumerState<CartProductTile> {
   }
 
   Future<Product> getProduct() async {
-    var result = await dio
-        .get('https://fakestoreapi.com/products/${widget.cartItem.id}');
+    var result =
+        await dio.get('https://fakestoreapi.com/products/${widget.product.id}');
     return Product.fromJson(result.data);
   }
 
@@ -61,18 +62,18 @@ class _CartProductTileState extends ConsumerState<CartProductTile> {
                     ],
                   ),
                 ),
-                Text('${widget.cartItem.amount}'),
+                Text('${widget.amount}'),
                 const Text('  ='),
                 SizedBox(
                     width: 100,
                     child: Text(
-                      '\$${snapshot.data!.price * widget.cartItem.amount}',
+                      '\$${snapshot.data!.price * widget.amount}',
                       textAlign: TextAlign.end,
                     )),
                 IconButton(
                   onPressed: () {
                     var cart = ref.read(cartNotifierProvider.notifier);
-                    cart.removeItem(widget.cartItem);
+                    cart.removeItem(widget.product);
                   },
                   icon: const Icon(Icons.delete),
                 ),

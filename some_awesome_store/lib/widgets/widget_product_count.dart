@@ -64,8 +64,7 @@ class _ProductCountWidgetState extends ConsumerState<ProductCountWidget> {
           onPressed: countController.text == '0'
               ? null
               : () {
-                  cart.addItem(CartItem(
-                      widget.product.id, int.parse(countController.text)));
+                  cart.addItem(widget.product, int.parse(countController.text));
                 },
           icon: const Icon(Icons.shopping_cart),
           label: const Text('Add to cart'),
