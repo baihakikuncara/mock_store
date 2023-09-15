@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/main.dart';
+import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/screens/screen_cart.dart';
+import 'package:some_awesome_store/widgets/badge_cart.dart';
 import 'package:some_awesome_store/widgets/widget_products.dart';
 
 final productsProvider = FutureProvider((ref) async {
@@ -17,11 +19,11 @@ Future<List> getProducts(_) async {
   return products;
 }
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -35,7 +37,7 @@ class HomeScreen extends ConsumerWidget {
                 builder: (context) => const CartScreen(),
               ));
         },
-        child: const Icon(Icons.shopping_cart),
+        child: const CartBadgeIcon(),
       ),
     );
   }

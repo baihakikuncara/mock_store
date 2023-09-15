@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/screens/screen_cart.dart';
+import 'package:some_awesome_store/widgets/badge_cart.dart';
 import 'package:some_awesome_store/widgets/widget_product_count.dart';
 import 'package:some_awesome_store/widgets/widget_star_rating.dart';
 
@@ -27,7 +28,7 @@ class ProductDetailScreen extends StatelessWidget {
               ),
             );
           },
-          icon: const Icon(Icons.shopping_cart),
+          icon: const CartBadgeIcon(),
         )
       ]),
       body: SingleChildScrollView(
