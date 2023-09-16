@@ -21,9 +21,27 @@ class _ProductCountWidgetState extends ConsumerState<ProductCountWidget> {
   final TextEditingController countController =
       TextEditingController(text: '0');
 
+  int amount = -1;
+
   @override
   Widget build(BuildContext context) {
-    var cart = ref.watch(cartNotifierProvider.notifier);
+    var cart = ref.watch(cartNotifierProvider);
+
+    if (amount < 0) {
+      amount = cart
+          .firstWhere(
+            (element) => element.$1.id == widget.product.id,
+            orElse: () => (widget.product, 0),
+          )
+          .$2;
+      countController.text = '$amount';
+    }
+
+    var inCart =
+        cart.where((element) => element.$1.id == widget.product.id).isNotEmpty;
+    var label =
+        inCart ? const Text('Change amount') : const Text('Add to cart');
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -34,8 +52,8 @@ class _ProductCountWidgetState extends ConsumerState<ProductCountWidget> {
               iconSize: ProductCountWidget.iconSize,
               onPressed: () {
                 setState(() {
-                  var val = int.parse(countController.text);
-                  countController.text = max(0, val - 1).toString();
+                  amount = max(amount - 1, 0);
+                  countController.text = '$amount';
                 });
               },
               icon: const Icon(Icons.remove),
@@ -46,14 +64,17 @@ class _ProductCountWidgetState extends ConsumerState<ProductCountWidget> {
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 controller: countController,
+                onChanged: (value) {
+                  amount = int.parse(countController.text);
+                },
               ),
             ),
             IconButton.filled(
               iconSize: ProductCountWidget.iconSize,
               onPressed: () {
                 setState(() {
-                  var val = int.parse(countController.text);
-                  countController.text = min(999, val + 1).toString();
+                  amount = min(amount + 1, 999);
+                  countController.text = '$amount';
                 });
               },
               icon: const Icon(Icons.add),
@@ -61,13 +82,15 @@ class _ProductCountWidgetState extends ConsumerState<ProductCountWidget> {
           ],
         ),
         ElevatedButton.icon(
-          onPressed: countController.text == '0'
+          onPressed: countController.text == '0' && !inCart
               ? null
               : () {
-                  cart.addItem(widget.product, int.parse(countController.text));
+                  var cartNotifier = ref.watch(cartNotifierProvider.notifier);
+                  cartNotifier.addItem(
+                      widget.product, int.parse(countController.text));
                 },
           icon: const Icon(Icons.shopping_cart),
-          label: const Text('Add to cart'),
+          label: label,
         ),
       ],
     );

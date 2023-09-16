@@ -96,7 +96,7 @@ class Tile extends ConsumerWidget {
           );
     return GestureDetector(
       onTap: () {
-        Navigator.pushReplacement(
+        Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ProductDetailScreen(product),

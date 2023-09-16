@@ -20,18 +20,36 @@ class CartNotifier extends StateNotifier<List<(Product, int)>> {
     }
   }
 
-  void addItem(Product newItem, int newAmount, [bool insertToDatabase = true]) {
-    int oldAmount = 0;
+  bool contains(Product product) {
+    for (final item in state) {
+      if (item.$1.id == product.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  int getAmount(Product product) {
+    for (final item in state) {
+      if (item.$1.id == product.id) return item.$2;
+    }
+    return 0;
+  }
+
+  void addItem(Product newItem, int amount, [bool insertToDatabase = true]) {
+    if (amount == 0) {
+      removeItem(newItem);
+      return;
+    }
     for (final item in state) {
       if (item.$1.id == newItem.id) {
-        oldAmount = item.$2;
         removeItem(item.$1);
         break;
       }
     }
-    state = [...state, (newItem, newAmount + oldAmount)];
+    state = [...state, (newItem, amount)];
     if (insertToDatabase) {
-      addItemToDatabase(newItem, newAmount + oldAmount);
+      addItemToDatabase(newItem, amount);
     }
   }
 
