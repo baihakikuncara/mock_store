@@ -11,10 +11,18 @@ class CartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     List<(Product, int)> carts = ref.watch(cartNotifierProvider);
     return Scaffold(
-      appBar: AppBar(),
-      body: ListView(
-        children: [for (final item in carts) CartProductTile(item.$1, item.$2)],
+      appBar: AppBar(
+        title: const Text('Cart'),
       ),
+      body: carts.isEmpty
+          ? const Center(
+              child: Text('Cart is empty'),
+            )
+          : ListView(
+              children: [
+                for (final item in carts) CartProductTile(item.$1, item.$2)
+              ],
+            ),
     );
   }
 }
