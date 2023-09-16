@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/main.dart';
 import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
+import 'package:some_awesome_store/screens/screen_product_detail.dart';
 
 class CartProductTile extends ConsumerStatefulWidget {
   final Product product;
@@ -16,12 +17,12 @@ class CartProductTile extends ConsumerStatefulWidget {
 }
 
 class _CartProductTileState extends ConsumerState<CartProductTile> {
-  late final Future<Product> product;
+  late final Future<Product> updatedProductData;
 
   @override
   void initState() {
     super.initState();
-    product = getProduct();
+    updatedProductData = getProduct();
   }
 
   Future<Product> getProduct() async {
@@ -35,60 +36,121 @@ class _CartProductTileState extends ConsumerState<CartProductTile> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
       child: FutureBuilder(
-        future: product,
+        future: updatedProductData,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Row(
-              children: [
-                SizedBox.square(
-                  dimension: 50,
-                  child: CachedNetworkImage(
-                    imageUrl: snapshot.data!.image,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        snapshot.data!.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text('\$${snapshot.data!.price}'),
-                    ],
-                  ),
-                ),
-                Text('${widget.amount}'),
-                const Text('  ='),
-                SizedBox(
-                    width: 100,
-                    child: Text(
-                      '\$${snapshot.data!.price * widget.amount}',
-                      textAlign: TextAlign.end,
-                    )),
-                IconButton(
-                  onPressed: () {
-                    var cart = ref.read(cartNotifierProvider.notifier);
-                    cart.removeItem(widget.product);
-                  },
-                  icon: const Icon(Icons.delete),
-                ),
-              ],
-            );
+            return Tile(snapshot.data!, widget.amount, false);
           } else if (snapshot.hasError) {
             return const Center(
               child: Text('failed to get data'),
             );
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return Tile(widget.product, widget.amount, true);
           }
         },
+      ),
+    );
+  }
+}
+
+class Tile extends ConsumerWidget {
+  static const thumbnailSize = 50.0;
+  static const fieldSizeSmall = 30.0;
+  static const fieldSizeMed = 50.0;
+  static const fieldSizeWide = 75.0;
+
+  final Product product;
+  final int amount;
+  final bool temp;
+
+  const Tile(this.product, this.amount, this.temp, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var price = temp
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+                width: fieldSizeMed,
+                child: Text(
+                  '\$${product.price}',
+                  textAlign: TextAlign.end,
+                )),
+          );
+    var totalPrice = temp
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: fieldSizeWide,
+              child: Text(
+                '\$${product.price * amount}',
+                textAlign: TextAlign.end,
+              ),
+            ),
+          );
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductDetailScreen(product),
+            ));
+      },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox.square(
+              dimension: thumbnailSize,
+              child: CachedNetworkImage(
+                imageUrl: product.image,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              product.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          SizedBox(
+            width: fieldSizeSmall,
+            child: Text(
+              '$amount',
+              textAlign: TextAlign.end,
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              'x',
+            ),
+          ),
+          price,
+          const Text('='),
+          totalPrice,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+              onPressed: () {
+                var cart = ref.read(cartNotifierProvider.notifier);
+                cart.removeItem(product);
+              },
+              icon: const Icon(Icons.delete),
+            ),
+          ),
+        ],
       ),
     );
   }
