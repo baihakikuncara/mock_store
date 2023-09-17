@@ -1,59 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:some_awesome_store/main.dart';
 import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/screens/screen_product_detail.dart';
 
-class CartProductTile extends ConsumerStatefulWidget {
-  final Product product;
-  final int amount;
-
-  const CartProductTile(this.product, this.amount, {super.key});
-
-  @override
-  ConsumerState<CartProductTile> createState() => _CartProductTileState();
-}
-
-class _CartProductTileState extends ConsumerState<CartProductTile> {
-  late final Future<Product> updatedProductData;
-
-  @override
-  void initState() {
-    super.initState();
-    updatedProductData = getProduct();
-  }
-
-  Future<Product> getProduct() async {
-    var result =
-        await dio.get('https://fakestoreapi.com/products/${widget.product.id}');
-    return Product.fromJson(result.data);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 16.0),
-      child: FutureBuilder(
-        future: updatedProductData,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Tile(snapshot.data!, widget.amount, false);
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('failed to get data'),
-            );
-          } else {
-            return Tile(widget.product, widget.amount, true);
-          }
-        },
-      ),
-    );
-  }
-}
-
-class Tile extends ConsumerWidget {
+class CartProductTile extends ConsumerWidget {
   static const thumbnailSize = 50.0;
   static const fieldSizeSmall = 30.0;
   static const fieldSizeMed = 50.0;
@@ -61,42 +13,33 @@ class Tile extends ConsumerWidget {
 
   final Product product;
   final int amount;
-  final bool temp;
 
-  const Tile(this.product, this.amount, this.temp, {super.key});
+  const CartProductTile(this.product, this.amount, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var price = temp
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-                width: fieldSizeMed,
-                child: Text(
-                  '\$${product.price}',
-                  textAlign: TextAlign.end,
-                )),
-          );
-    var totalPrice = temp
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: fieldSizeWide,
-              child: Text(
-                '\$${product.price * amount}',
-                textAlign: TextAlign.end,
-              ),
-            ),
-          );
+    var price = Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+          width: fieldSizeMed,
+          child: Text(
+            '\$${product.price}',
+            textAlign: TextAlign.end,
+          )),
+    );
+    var totalPrice = Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: fieldSizeWide,
+        child: Text(
+          '\$${product.price * amount}',
+          textAlign: TextAlign.end,
+        ),
+      ),
+    );
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => ProductDetailScreen(product),
