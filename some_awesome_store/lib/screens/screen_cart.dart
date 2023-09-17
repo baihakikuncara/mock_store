@@ -39,9 +39,12 @@ class _CartScreenState extends ConsumerState {
                             children: [
                               for (final item in carts)
                                 CartProductTile(item.$1, item.$2),
-                              const PriceSumWidget(),
                             ],
                           ),
+                        ),
+                        const PriceSumWidget(),
+                        const SizedBox(
+                          height: 32,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
