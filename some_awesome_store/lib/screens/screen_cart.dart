@@ -32,11 +32,22 @@ class _CartScreenState extends ConsumerState {
                 future: updateData(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return ListView(
+                    return Column(
                       children: [
-                        for (final item in carts)
-                          CartProductTile(item.$1, item.$2),
-                        const PriceSumWidget(),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              for (final item in carts)
+                                CartProductTile(item.$1, item.$2),
+                              const PriceSumWidget(),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                              onPressed: () {}, child: const Text('Purchase')),
+                        ),
                       ],
                     );
                   } else if (snapshot.hasError) {
