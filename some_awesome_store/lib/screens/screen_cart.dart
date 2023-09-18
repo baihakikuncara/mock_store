@@ -5,15 +5,10 @@ import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/widgets/tile_cart_product.dart';
 
-class CartScreen extends ConsumerStatefulWidget {
+class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
 
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends ConsumerState {
-  Future<bool> updateCartData() async {
+  Future<bool> updateCartData(WidgetRef ref) async {
     var cartItems = ref.read(cartNotifierProvider);
     var networkManager = ref.read(networkManagerProvider);
     List<(Product, int)> newData = [];
@@ -29,13 +24,13 @@ class _CartScreenState extends ConsumerState {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Cart'),
         ),
         body: FutureBuilder(
-            future: updateCartData(),
+            future: updateCartData(ref),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 var cart = ref.watch(cartNotifierProvider);
