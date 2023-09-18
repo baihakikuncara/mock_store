@@ -20,19 +20,8 @@ class CartNotifier extends StateNotifier<List<(Product, int)>> {
     }
   }
 
-  Future<bool> updateData() async {
-    List<(Product, int)> updatedState = List.empty();
-    try {
-      for (final item in state) {
-        var result =
-            await dio.get('https://fakestoreapi.com/products/${item.$1.id}');
-        updatedState.add((Product.fromJson(result.data!), item.$2));
-      }
-      state = updatedState;
-      return true;
-    } catch (e) {
-      return false;
-    }
+  void updateData(List<(Product, int)> updatedData) {
+    state = updatedData;
   }
 
   bool contains(Product product) {

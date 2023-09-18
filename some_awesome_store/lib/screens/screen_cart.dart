@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:some_awesome_store/main.dart';
 import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/widgets/tile_cart_product.dart';
@@ -12,57 +13,67 @@ class CartScreen extends ConsumerStatefulWidget {
 }
 
 class _CartScreenState extends ConsumerState {
-  Future<List<(Product, int)>> updateData() async {
-    await ref.read(cartNotifierProvider.notifier).updateData();
-    return ref.watch(cartNotifierProvider);
+  Future<bool> updateCartData() async {
+    var cartItems = ref.read(cartNotifierProvider);
+    var networkManager = ref.read(networkManagerProvider);
+    List<(Product, int)> newData = [];
+
+    for (final cartItem in cartItems) {
+      var product = await networkManager.getProduct(cartItem.$1.id);
+      if (product != null) {
+        newData.add((product, cartItem.$2));
+      }
+    }
+    ref.read(cartNotifierProvider.notifier).updateData(newData);
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    List<(Product, int)> carts = ref.watch(cartNotifierProvider);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Cart'),
         ),
-        body: carts.isEmpty
-            ? const Center(
-                child: Text('Cart is empty'),
-              )
-            : FutureBuilder(
-                future: updateData(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              for (final item in carts)
-                                CartProductTile(item.$1, item.$2),
-                            ],
-                          ),
+        body: FutureBuilder(
+            future: updateCartData(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var cart = ref.watch(cartNotifierProvider);
+                if (cart.isEmpty) {
+                  return const Center(child: Text('Cart is empty'));
+                } else {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            for (final item in cart)
+                              CartProductTile(item.$1, item.$2),
+                          ],
                         ),
-                        const PriceSumWidget(),
-                        const SizedBox(
-                          height: 32,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                              onPressed: () {}, child: const Text('Purchase')),
-                        ),
-                      ],
-                    );
-                  } else if (snapshot.hasError) {
-                    return const Center(
-                      child: Text('error'),
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }));
+                      ),
+                      const PriceSumWidget(),
+                      const SizedBox(
+                        height: 32,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: () {}, child: const Text('Purchase')),
+                      ),
+                    ],
+                  );
+                }
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text('error'),
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }));
   }
 }
 

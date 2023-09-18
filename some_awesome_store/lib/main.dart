@@ -1,12 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
+import 'package:some_awesome_store/managers/manager_network.dart';
 import 'package:some_awesome_store/screens/screens_home.dart';
 import 'package:sqflite/sqflite.dart';
 
-final dio = Dio();
 late final database;
+final networkManagerProvider = StateProvider((ref) => NetworkManager());
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +31,7 @@ class _MainAppState extends ConsumerState<MainApp> {
   void initState() {
     super.initState();
     setupDatabase();
+    ref.read(networkManagerProvider);
   }
 
   @override
