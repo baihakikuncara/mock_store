@@ -23,7 +23,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
         newData.add((product, cartItem.$2));
       }
     }
-    Future(
+    await Future(
       () {
         ref.watch(cartNotifierProvider.notifier).updateData(newData);
       },
