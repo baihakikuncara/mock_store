@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:some_awesome_store/models/cart_notifier.dart';
+import 'package:some_awesome_store/main.dart';
 
 class PriceSumWidget extends ConsumerWidget {
   const PriceSumWidget({super.key});

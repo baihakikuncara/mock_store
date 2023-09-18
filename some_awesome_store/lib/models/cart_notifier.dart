@@ -1,23 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/main.dart';
+import 'package:some_awesome_store/managers/manager_database.dart';
 import 'package:some_awesome_store/models/products.dart';
-import 'package:sqflite/sqflite.dart';
-
-final cartNotifierProvider =
-    StateNotifierProvider<CartNotifier, List<(Product, int)>>(
-        (ref) => CartNotifier());
 
 class CartNotifier extends StateNotifier<List<(Product, int)>> {
-  CartNotifier() : super([]) {
-    retrieveData();
+  CartNotifier(DatabaseManager databaseManager) : super([]) {
+    initializeData(databaseManager);
   }
 
-  void retrieveData() async {
-    final db = await database;
-    final List<Map<String, dynamic>> items = await db.query('cart');
-    for (var item in items) {
-      addItem(Product.fromJson(item), item['amount'], false);
-    }
+  Future<void> initializeData(DatabaseManager databaseManager) async {
+    state = await databaseManager.retrieveCartData();
   }
 
   void updateData(List<(Product, int)> updatedData) {
@@ -40,48 +32,30 @@ class CartNotifier extends StateNotifier<List<(Product, int)>> {
     return 0;
   }
 
-  void addItem(Product newItem, int amount, [bool insertToDatabase = true]) {
+  void addItem(Product newItem, int amount, WidgetRef ref) {
+    var databaseManager = ref.read(databaseManagerProvider);
     if (amount == 0) {
-      removeItem(newItem);
+      removeItem(newItem.id, ref);
       return;
     }
     for (final item in state) {
       if (item.$1.id == newItem.id) {
-        removeItem(item.$1);
+        removeItem(item.$1.id, ref);
         break;
       }
     }
     state = [...state, (newItem, amount)];
-    if (insertToDatabase) {
-      addItemToDatabase(newItem, amount);
-    }
+
+    databaseManager.addItem(newItem, amount);
   }
 
-  void addItemToDatabase(Product item, int amount) async {
-    final db = await database;
-    var data = item.toMap();
-    data['amount'] = amount;
-    db.insert(
-      'cart',
-      data,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  void removeItem(Product newItem) {
+  void removeItem(int id, WidgetRef ref) {
+    var databaseManager = ref.read(databaseManagerProvider);
     state = [
       for (final item in state)
-        if (newItem.id != item.$1.id) item
+        if (id != item.$1.id) item
     ];
-    removeItemFromDatabase(newItem.id);
-  }
 
-  void removeItemFromDatabase(int id) async {
-    final db = await database;
-    db.delete(
-      'cart',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    databaseManager.removeItem(id);
   }
 }

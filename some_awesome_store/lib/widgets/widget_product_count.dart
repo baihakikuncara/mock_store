@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:some_awesome_store/models/cart_notifier.dart';
+import 'package:some_awesome_store/main.dart';
 import 'package:some_awesome_store/models/products.dart';
 
 class ProductCountWidget extends ConsumerStatefulWidget {
@@ -85,9 +85,11 @@ class _ProductCountWidgetState extends ConsumerState<ProductCountWidget> {
           onPressed: countController.text == '0' && !inCart
               ? null
               : () {
-                  var cartNotifier = ref.watch(cartNotifierProvider.notifier);
-                  cartNotifier.addItem(
-                      widget.product, int.parse(countController.text));
+                  var product = widget.product;
+                  var amount = int.parse(countController.text);
+                  ref
+                      .watch(cartNotifierProvider.notifier)
+                      .addItem(product, amount, ref);
                 },
           icon: const Icon(Icons.shopping_cart),
           label: label,

@@ -1,44 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/main.dart';
-import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/widgets/tile_cart_product.dart';
 import 'package:some_awesome_store/widgets/widget_price_sum.dart';
 
-class CartScreen extends ConsumerWidget {
+class CartScreen extends ConsumerStatefulWidget {
   const CartScreen({super.key});
 
-  Future<bool> updateCartData(WidgetRef ref) async {
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends ConsumerState<CartScreen> {
+  Future<bool> updateCartData() async {
     var cartItems = ref.read(cartNotifierProvider);
     var networkManager = ref.read(networkManagerProvider);
     List<(Product, int)> newData = [];
-
     for (final cartItem in cartItems) {
       var product = await networkManager.getProduct(cartItem.$1.id);
       if (product != null) {
         newData.add((product, cartItem.$2));
       }
     }
-    ref.read(cartNotifierProvider.notifier).updateData(newData);
+    Future(
+      () {
+        ref.watch(cartNotifierProvider.notifier).updateData(newData);
+      },
+    );
+
     return true;
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Cart'),
-        ),
-        body: FutureBuilder(
-            future: updateCartData(ref),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var cart = ref.watch(cartNotifierProvider);
-                if (cart.isEmpty) {
-                  return const Center(child: Text('Cart is empty'));
-                } else {
-                  return Column(
+      appBar: AppBar(
+        title: const Text('Cart'),
+      ),
+      body: FutureBuilder(
+        future: updateCartData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var cart = ref.watch(cartNotifierProvider);
+            return cart.isEmpty
+                ? const Center(child: Text('Cart is empty'))
+                : Column(
                     children: [
                       Expanded(
                         child: ListView(
@@ -59,16 +66,17 @@ class CartScreen extends ConsumerWidget {
                       ),
                     ],
                   );
-                }
-              } else if (snapshot.hasError) {
-                return const Center(
-                  child: Text('error'),
-                );
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }));
+          } else if (snapshot.hasError) {
+            return const Center(
+              child: Text('Error retrieving cart data'),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+    );
   }
 }

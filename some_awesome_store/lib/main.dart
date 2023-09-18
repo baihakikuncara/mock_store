@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart';
+import 'package:some_awesome_store/managers/manager_database.dart';
 import 'package:some_awesome_store/managers/manager_network.dart';
+import 'package:some_awesome_store/models/cart_notifier.dart';
+import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/screens/screens_home.dart';
-import 'package:sqflite/sqflite.dart';
 
-late final database;
 final networkManagerProvider = StateProvider((ref) => NetworkManager());
+final databaseManagerProvider = StateProvider((ref) => DatabaseManager());
+final cartNotifierProvider =
+    StateNotifierProvider<CartNotifier, List<(Product, int)>>(
+        (ref) => CartNotifier(ref.read(databaseManagerProvider)));
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,8 +32,8 @@ class _MainAppState extends ConsumerState<MainApp> {
   @override
   void initState() {
     super.initState();
-    setupDatabase();
     ref.read(networkManagerProvider);
+    ref.read(databaseManagerProvider);
   }
 
   @override
@@ -42,15 +46,4 @@ class _MainAppState extends ConsumerState<MainApp> {
       ),
     );
   }
-}
-
-void setupDatabase() async {
-  database = await openDatabase(
-    join(await getDatabasesPath(), 'cart_database.db'),
-    onCreate: (db, version) {
-      return db.execute(
-          'CREATE TABLE cart(id INTEGER PRIMARY KEY, title TEXT, price REAL, description TEXT, category TEXT, image TEXT, amount INT)');
-    },
-    version: 1,
-  );
 }

@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:some_awesome_store/models/cart_notifier.dart';
+import 'package:some_awesome_store/main.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/screens/screen_product_detail.dart';
 
@@ -88,7 +88,7 @@ class CartProductTile extends ConsumerWidget {
             child: IconButton(
               onPressed: () {
                 var cart = ref.read(cartNotifierProvider.notifier);
-                cart.removeItem(product);
+                cart.removeItem(product.id, ref);
               },
               icon: const Icon(Icons.delete),
             ),
