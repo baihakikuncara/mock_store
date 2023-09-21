@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/managers/manager_database.dart';
@@ -14,6 +16,9 @@ enum Category {
   womenClothing,
 }
 
+final searchBarControllerProvider =
+    StateProvider((ref) => TextEditingController());
+final searchBarValueProvider = StateProvider((ref) => '');
 final networkManagerProvider = StateProvider((ref) => NetworkManager());
 final databaseManagerProvider = StateProvider((ref) => DatabaseManager());
 final cartNotifierProvider =
@@ -40,12 +45,23 @@ final productsProvider = FutureProvider((ref) async {
     default:
       break;
   }
-  switch (category) {
-    case Category.all:
-      return response;
-    default:
-      return response.where((element) => element.category == categoryString);
+  var filtered = response.toList();
+  if (category != Category.all) {
+    filtered = filtered
+        .where((element) => element.category == categoryString)
+        .toList();
   }
+  var searchText = ref.watch(searchBarValueProvider).toLowerCase();
+  log(searchText, name: 'baihaki');
+  if (searchText.isNotEmpty) {
+    return filtered.where(
+      (element) {
+        return element.title.toLowerCase().contains(searchText) ||
+            element.description.toLowerCase().contains(searchText);
+      },
+    );
+  }
+  return filtered;
 });
 
 void main() {

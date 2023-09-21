@@ -15,6 +15,7 @@ class ProductsWidget extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               const Text('Category: '),
               DropdownMenu(
@@ -52,7 +53,7 @@ class ProductsWidget extends ConsumerWidget {
           flex: 1,
           child: products.when(
             data: (data) {
-              if (data.isEmpty) {
+              if (data!.isEmpty) {
                 return const Center(
                   child: Text('No products to show'),
                 );
