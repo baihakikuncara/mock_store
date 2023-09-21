@@ -11,7 +11,6 @@ class ProductsWidget extends ConsumerWidget {
     var products = ref.watch(productsProvider);
     return products.when(
       data: (data) {
-        print(data);
         if (data.isEmpty) {
           return const Center(
             child: Text('No products to show'),
