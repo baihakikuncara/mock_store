@@ -29,7 +29,7 @@ final productsProvider = FutureProvider((ref) async {
       categoryString = 'electronics';
       break;
     case Category.jewelry:
-      categoryString = 'jewelry';
+      categoryString = 'jewelery';
       break;
     case Category.menClothing:
       categoryString = "men's clothing";
