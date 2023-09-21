@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/managers/manager_database.dart';
@@ -52,7 +50,6 @@ final productsProvider = FutureProvider((ref) async {
         .toList();
   }
   var searchText = ref.watch(searchBarValueProvider).toLowerCase();
-  log(searchText, name: 'baihaki');
   if (searchText.isNotEmpty) {
     return filtered.where(
       (element) {
