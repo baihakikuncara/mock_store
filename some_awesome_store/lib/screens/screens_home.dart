@@ -43,7 +43,6 @@ class HomeScreen extends ConsumerWidget {
             },
             onSelected: (value) {
               ref.read(categoryProvider.notifier).state = value;
-              print(ref.read(categoryProvider));
             },
           ),
         ],

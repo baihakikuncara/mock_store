@@ -20,6 +20,33 @@ final cartNotifierProvider =
     StateNotifierProvider<CartNotifier, List<(Product, int)>>(
         (ref) => CartNotifier(ref.read(databaseManagerProvider)));
 final categoryProvider = StateProvider((ref) => Category.all);
+final productsProvider = FutureProvider((ref) async {
+  final response = await ref.watch(networkManagerProvider).getAllProducts();
+  var category = ref.watch(categoryProvider);
+  var categoryString = '';
+  switch (category) {
+    case Category.electronics:
+      categoryString = 'electronics';
+      break;
+    case Category.jewelry:
+      categoryString = 'jewelry';
+      break;
+    case Category.menClothing:
+      categoryString = "men's clothing";
+      break;
+    case Category.womenClothing:
+      categoryString = "women's clothing";
+      break;
+    default:
+      break;
+  }
+  switch (category) {
+    case Category.all:
+      return response;
+    default:
+      return response.where((element) => element.category == categoryString);
+  }
+});
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
