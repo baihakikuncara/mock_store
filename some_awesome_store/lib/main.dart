@@ -6,11 +6,20 @@ import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/screens/screens_home.dart';
 
+enum Category {
+  all,
+  electronics,
+  jewelry,
+  menClothing,
+  womenClothing,
+}
+
 final networkManagerProvider = StateProvider((ref) => NetworkManager());
 final databaseManagerProvider = StateProvider((ref) => DatabaseManager());
 final cartNotifierProvider =
     StateNotifierProvider<CartNotifier, List<(Product, int)>>(
         (ref) => CartNotifier(ref.read(databaseManagerProvider)));
+final categoryProvider = StateProvider((ref) => Category.all);
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
