@@ -1,8 +1,13 @@
+import 'dart:io' show Platform;
 import 'package:path/path.dart';
 import 'package:some_awesome_store/models/products.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseManager {
+  static const databaseName = 'cart_database.db';
+  static const createDBQuery =
+      'CREATE TABLE cart(id INTEGER PRIMARY KEY, title TEXT, price REAL, description TEXT, category TEXT, image TEXT, amount INT)';
+
   static Database? _database;
 
   Future<Database> getDatabase() async {
@@ -14,11 +19,20 @@ class DatabaseManager {
   }
 
   Future<Database> initializeDatabase() async {
+    if (Platform.isWindows) {
+      return databaseFactory.openDatabase(
+          join(await getDatabasesPath(), 'cart_database.db'),
+          options: OpenDatabaseOptions(
+            onCreate: (db, version) {
+              return db.execute(createDBQuery);
+            },
+            version: 1,
+          ));
+    }
     return openDatabase(
-      join(await getDatabasesPath(), 'cart_database.db'),
+      join(await getDatabasesPath(), databaseName),
       onCreate: (db, version) {
-        return db.execute(
-            'CREATE TABLE cart(id INTEGER PRIMARY KEY, title TEXT, price REAL, description TEXT, category TEXT, image TEXT, amount INT)');
+        return db.execute(createDBQuery);
       },
       version: 1,
     );

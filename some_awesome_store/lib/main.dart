@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:some_awesome_store/managers/manager_database.dart';
@@ -5,6 +7,7 @@ import 'package:some_awesome_store/managers/manager_network.dart';
 import 'package:some_awesome_store/models/cart_notifier.dart';
 import 'package:some_awesome_store/models/products.dart';
 import 'package:some_awesome_store/screens/screens_home.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 enum Category {
   all,
@@ -63,6 +66,10 @@ final productsProvider = FutureProvider((ref) async {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
   runApp(
     const ProviderScope(
       child: MainApp(),
