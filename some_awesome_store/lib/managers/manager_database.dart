@@ -21,7 +21,7 @@ class DatabaseManager {
   Future<Database> initializeDatabase() async {
     if (Platform.isWindows) {
       return databaseFactory.openDatabase(
-          join(await getDatabasesPath(), 'cart_database.db'),
+          join(await getDatabasesPath(), databaseName),
           options: OpenDatabaseOptions(
             onCreate: (db, version) {
               return db.execute(createDBQuery);
